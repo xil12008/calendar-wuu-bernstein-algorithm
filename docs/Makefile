@@ -87,9 +87,9 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/calendar-wuu-bernstein-algorithm.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/wuu.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/calendar-wuu-bernstein-algorithm.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/wuu.qhc"
 
 applehelp:
 	$(SPHINXBUILD) -b applehelp $(ALLSPHINXOPTS) $(BUILDDIR)/applehelp
@@ -104,8 +104,8 @@ devhelp:
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/calendar-wuu-bernstein-algorithm"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/calendar-wuu-bernstein-algorithm"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/wuu"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/wuu"
 	@echo "# devhelp"
 
 epub:
