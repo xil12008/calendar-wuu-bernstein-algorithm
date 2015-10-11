@@ -28,5 +28,3 @@ class CalendarServerFactory(Factory):
     def buildProtocol(self, addr):
         return CalendarServer()
 
-reactor.listenTCP(12345, CalendarServerFactory())
-reactor.run()

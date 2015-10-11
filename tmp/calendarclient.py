@@ -38,6 +38,3 @@ class CalendarClientFactory(ReconnectingClientFactory):
         ReconnectingClientFactory.clientConnectionFailed(self, connector,
                                                          reason)
 
-reactor.connectTCP("52.26.113.118", 12345, CalendarClientFactory())
-#@TODO connect to other nodes
-reactor.run()

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to wuu’s documentation! &mdash; wuu 0.1 documentation</title>
+    <title>Welcome to Wuu-Bernstein-Algorithm-based Calendar’s documentation! &mdash; wuu 0.1 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -25,6 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="wuu 0.1 documentation" href="#" />
+    <link rel="next" title="The code" href="code.html" />
    
   
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
@@ -37,19 +38,31 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-wuu-s-documentation">
-<h1>Welcome to wuu&#8217;s documentation!<a class="headerlink" href="#welcome-to-wuu-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
+  <div class="section" id="welcome-to-wuu-bernstein-algorithm-based-calendar-s-documentation">
+<h1>Welcome to Wuu-Bernstein-Algorithm-based Calendar&#8217;s documentation!<a class="headerlink" href="#welcome-to-wuu-bernstein-algorithm-based-calendar-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>For this project, we will implement a distributed calendar application using a replicated log and dictionary. There are totally 4 nodes and every node could schedule appointments with others.</p>
+<p>Calendar will keep appointment event, where each appointment is a tuple consisting of the following fields:</p>
+<p>1.Name: unique appointment name</p>
+<p>2.Day: Date of appointment</p>
+<p>3.Start Time</p>
+<p>4.End Time</p>
+<p>5.Participants: List of node ids</p>
+<div class="section" id="wuu-bernstein-algorithm">
+<h2>Wuu Bernstein Algorithm<a class="headerlink" href="#wuu-bernstein-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>The paper <a class="reference external" href="http://cs.ucsb.edu/~hatem/cs271/replicated-log.pdf">paper link</a>.</p>
+<p>Each node keeps a log, recording every local event, i.e. a new appointment been scheduled/deleted. Those local events are shared among nodes so that all the other nodes will be updated.</p>
+<p>Each node also maintains a dictionary according to the events. If a node receives some new events from another node, then it will operate on its&#8217; own dictionary and try to keep dictionary up-to-date.</p>
+<p>For example, node i schedule an appointment with node j, let&#8217;s call this event E. node i puts E into its local log and send a message to notify node j. When j receives the message from i, it notices that, oops, new event E has not yet been executed yet, thus executes it, and this appointment event is inserted into j&#8217;s dictionary.</p>
+</div>
+<div class="section" id="code">
+<h2>Code:<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
-<ul class="simple">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code.html">The code</a></li>
 </ul>
 </div>
-<span class="target" id="module-wuu"></span><dl class="class">
-<dt id="wuu.WuuBernstein">
-<em class="property">class </em><code class="descclassname">wuu.</code><code class="descname">WuuBernstein</code><a class="headerlink" href="#wuu.WuuBernstein" title="Permalink to this definition">¶</a></dt>
-<dd><p>The wuu bernstein algorithm</p>
-</dd></dl>
-
+<p>Github <a class="reference external" href="https://github.com/xil12008/calendar-wuu-bernstein-algorithm">github link</a>.</p>
+</div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
@@ -68,13 +81,18 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to wuu&#8217;s documentation!</a></li>
+<li><a class="reference internal" href="#">Welcome to Wuu-Bernstein-Algorithm-based Calendar&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#wuu-bernstein-algorithm">Wuu Bernstein Algorithm</a></li>
+<li><a class="reference internal" href="#code">Code:</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="code.html" title="next chapter">The code</a></li>
   </ul></li>
 </ul>
 </div>
