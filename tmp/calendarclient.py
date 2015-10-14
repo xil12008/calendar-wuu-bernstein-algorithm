@@ -8,10 +8,10 @@ class CalendarClient(Protocol):
         stdout.write("Send Message %s\n" % msg)
 
     def dataReceived(self, data):
-        stdout.write("Data %s\n" % data)
+        stdout.write("Data Received %s\n" % data)
+        self.sendMessage(data)
         self.handle_user_input()
 
-    def handle_user_input(self):
         userInput = raw_input(">>")
         self.sendMessage(userInput)
 
@@ -27,6 +27,7 @@ class CalendarClientFactory(ReconnectingClientFactory):
         print 'Resetting reconnection delay'
         self.resetDelay()
         self.p = CalendarClient()
+        stdio.StandardIO(self.p)
         return self.p
 
     def clientConnectionLost(self, connector, reason):

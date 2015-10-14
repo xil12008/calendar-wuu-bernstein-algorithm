@@ -6,7 +6,7 @@ import random
 class DataForwardingProtocol(protocol.Protocol):
     def __init__(self, clients):
         self.clients = clients
-        self.name = random.getrandombits(128)
+        self.name = random.getrandbits(128)
         self.output = None
         self.normalizeNewlines = False
 
@@ -14,10 +14,17 @@ class DataForwardingProtocol(protocol.Protocol):
         if self.normalizeNewlines:
             data = re.sub(r"(\r\n|\n)", "\r\n", data)
         if self.output:
-            self.output.write(data)
+            self.output.write("channel%s: %s" %(self.name , data))
+            for name, protocol in self.clients.iteritems():
+                if protocol != self:
+                    protocol.output.write("channel%s: %s" %(protocol.name , data))
    
+    def connectionMade(self):
+        self.clients[self.name] = self 
+
     def connectionLost(self, reason):
-        #@todo 
+        if self.name in self.clients:
+            del self.clients[self.name]
 
 class StdioProxyProtocol(protocol.Protocol):
     def __init__(self, clients):
@@ -37,7 +44,6 @@ class StdioProxyProtocol(protocol.Protocol):
         inputForwarder.normalizeNewlines = True
         stdioWrapper = stdio.StandardIO(inputForwarder)
         self.output = stdioWrapper
-        self.clients[inputForwarder.name] = inputForwarder 
         print "Connected to server.  Press ctrl-C to close connection."
 
 class StdioProxyFactory(protocol.ClientFactory):
