@@ -3,6 +3,12 @@ from twisted.protocols import basic
 import re
 import random
 
+#         DataFowardingProtocolVV
+#   user-----> inputForwarder       .output
+#     <--                                 \-->-->--->>
+#        \ .output                                    \ 
+#       instance of stdioProxyProtocol     .transport--> remote server
+
 class DataForwardingProtocol(protocol.Protocol):
     def __init__(self, clients):
         self.clients = clients
@@ -14,10 +20,19 @@ class DataForwardingProtocol(protocol.Protocol):
         if self.normalizeNewlines:
             data = re.sub(r"(\r\n|\n)", "\r\n", data)
         if self.output:
-            self.output.write("channel%s: %s" %(self.name , data))
-            for name, protocol in self.clients.iteritems():
-                if protocol != self:
-                    protocol.output.write("channel%s: %s" %(protocol.name , data))
+            self.multicast(data)
+           
+    def multicast(self, data):
+        self.output.write("channel%s: %s" %(self.name , data))
+        for name, protocol in self.clients.iteritems():
+            if protocol != self:
+                protocol.output.write("channel%s: %s" %(protocol.name , data))
+
+    def send2Node(self, nodeId, data):
+        return
+
+    def handlingUserInput(self, cmd):
+        return
    
     def connectionMade(self):
         self.clients[self.name] = self 
