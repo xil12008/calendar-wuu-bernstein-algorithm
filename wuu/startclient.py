@@ -8,11 +8,25 @@ from proxyclient import StdioProxyFactory
 
 from configure import Configuration 
 
-#reactor.connectTCP("52.26.113.118", 12345, CalendarClientFactory())
+import logging
+import sys
+
+LEVELS = { 'debug':logging.DEBUG,
+            'info':logging.INFO,
+            'warning':logging.WARNING,
+            'error':logging.ERROR,
+            'critical':logging.CRITICAL,
+            }
+
+if len(sys.argv) > 1:
+    level_name = sys.argv[1]
+    level = LEVELS.get(level_name, logging.NOTSET)
+    logging.basicConfig(level=level)
 
 #Note only creation once
-spfactory =  StdioProxyFactory(Configuration.getMyID())
+spfactory =  StdioProxyFactory(Configuration.getMyID(), Configuration.getPublicIP())
 for ip in Configuration.IPTABLE:
+    
     reactor.connectTCP(ip, Configuration.PORT, spfactory)
 reactor.run()
 

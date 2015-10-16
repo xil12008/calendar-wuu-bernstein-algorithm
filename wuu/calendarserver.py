@@ -10,6 +10,7 @@ from twisted.internet.protocol import Factory
 from twisted.protocols.basic import LineReceiver
 from twisted.internet import reactor
 from sys import stdout
+from configure import Configuration
 
 class CalendarServer(LineReceiver):
     def connectionMade(self):
@@ -22,7 +23,7 @@ class CalendarServer(LineReceiver):
                          % self.transport.getPeer())
 
     def lineReceived(self, line):
-        stdout.write("Received Data: %s\n" % line)
+        stdout.write("Server%d Received Data: %s\n" %( Configuration.getMyID(), line))
 
 class CalendarServerFactory(Factory):
     def buildProtocol(self, addr):

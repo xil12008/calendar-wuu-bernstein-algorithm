@@ -1,9 +1,29 @@
 from twisted.internet import stdio, reactor, protocol
+from twisted.internet.protocol import ReconnectingClientFactory
 from twisted.protocols import basic
 import re
 import random
 
 from calendarserver import CalendarServer, CalendarServerFactory
+from configure import Configuration
+
+import pdb
+
+import logging
+import sys
+
+LEVELS = { 'debug':logging.DEBUG,
+            'info':logging.INFO,
+            'warning':logging.WARNING,
+            'error':logging.ERROR,
+            'critical':logging.CRITICAL,
+            }
+
+if len(sys.argv) > 1:
+    level_name = sys.argv[1]
+    level = LEVELS.get(level_name, logging.NOTSET)
+    logging.basicConfig(level=level)
+
 
 #         DataFowardingProtocolVV
 #   user-----> inputForwarder       .output
@@ -12,8 +32,11 @@ from calendarserver import CalendarServer, CalendarServerFactory
 #       instance of stdioProxyProtocol     .transport--> remote server
 
 class DataForwardingProtocol(protocol.Protocol):
-    def __init__(self, clients):
+    def __init__(self, clients, addr):
         self.clients = clients
+        self.addr = addr
+        self.IP = addr.host
+        self.ID = Configuration.getID(self.IP)
         self.name = random.getrandbits(128)
         self.output = None
         self.normalizeNewlines = False
@@ -25,10 +48,10 @@ class DataForwardingProtocol(protocol.Protocol):
             self.multicast(data)
            
     def multicast(self, data):
-        self.output.write("channel%s: %s" %(self.name , data))
+        self.output.write("from%d: %s" %(self.ID, data))
         for name, protocol in self.clients.iteritems():
             if protocol != self:
-                protocol.output.write("channel%s: %s" %(protocol.name , data))
+                protocol.output.write("from%d: %s" %(self.ID, data))
 
     def send2Node(self, nodeId, data):
         return
@@ -44,9 +67,10 @@ class DataForwardingProtocol(protocol.Protocol):
             del self.clients[self.name]
 
 class StdioProxyProtocol(protocol.Protocol):
-    def __init__(self, clients):
+    def __init__(self, clients, addr):
         self.output = None
         self.clients = clients
+        self.addr = addr
         self.normalizeNewlines = False
 
     def dataReceived(self, data):
@@ -56,28 +80,35 @@ class StdioProxyProtocol(protocol.Protocol):
             self.output.write(data)
 
     def connectionMade(self):
-        inputForwarder = DataForwardingProtocol(self.clients)
+        inputForwarder = DataForwardingProtocol(self.clients, self.addr)
         inputForwarder.output = self.transport
         inputForwarder.normalizeNewlines = True
         stdioWrapper = stdio.StandardIO(inputForwarder)
         self.output = stdioWrapper
-        print "Connected to server.  Press ctrl-C to close connection."
+        logging.info("Client: Connected to server.  Press ctrl-C to close connection.")
 
-class StdioProxyFactory(protocol.ClientFactory):
+class StdioProxyFactory(ReconnectingClientFactory):
     protocol = StdioProxyProtocol
     
-    def __init__(self, ID):
+    def __init__(self, ID, IP):
         #start one unique server
         reactor.listenTCP(12345, CalendarServerFactory())
+        logging.info("Server%d Launched, my ip=%s" % (ID, IP))
         self.clients={}
         self.ID = ID 
 
     def buildProtocol(self, addr):
-        return StdioProxyProtocol(self.clients)
+        #Consider expo delay for reconnection
+        logging.info("Building Protocol addr=%s" % addr)
+        return StdioProxyProtocol(self.clients, addr)
+   
+    def clientConnectionLost(self, connector, reason):
+        logging.debug('Connection Lost. Reason: %s' % reason)
+        logging.info('Connection Lost.') 
+        ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
 
-    def clientConnectionLost(self, transport, reason):
-        reactor.stop( )
-
-    def clientConnectionFailed(self, transport, reason):
-        print reason.getErrorMessage( )
-        reactor.stop( )
+    def clientConnectionFailed(self, connector, reason):
+        logging.debug('Connection failed. Reason: %s' % reason)
+        logging.info('Connection failed.') 
+        ReconnectingClientFactory.clientConnectionFailed(self, connector,
+                                                         reason)
