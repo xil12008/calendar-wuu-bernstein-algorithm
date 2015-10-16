@@ -36,7 +36,7 @@ class DataForwardingProtocol(protocol.Protocol):
         self.clients = clients
         self.addr = addr
         self.IP = addr.host
-        self.ID = Configuration.getID(self.IP)
+        self.targetID = Configuration.getID(self.IP)
         self.name = random.getrandbits(128)
         self.output = None
         self.normalizeNewlines = False
@@ -45,16 +45,21 @@ class DataForwardingProtocol(protocol.Protocol):
         if self.normalizeNewlines:
             data = re.sub(r"(\r\n|\n)", "\r\n", data)
         if self.output:
-            self.multicast(data)
+            self.send2Node(1,data)
+            #self.multicast(data)
            
     def multicast(self, data):
-        self.output.write("from%d: %s" %(self.ID, data))
+        self.output.write("%s" %(data))
         for name, protocol in self.clients.iteritems():
             if protocol != self:
-                protocol.output.write("from%d: %s" %(self.ID, data))
+                protocol.output.write("%s" %(data))
 
     def send2Node(self, nodeId, data):
-        return
+        for name, protocol in self.clients.iteritems():
+            if protocol.targetID == nodeId:
+                protocol.output.write("%s" %(data))
+                return
+        logging.warning("Message not sent because no connection found")
 
     def handlingUserInput(self, cmd):
         return
@@ -90,12 +95,11 @@ class StdioProxyProtocol(protocol.Protocol):
 class StdioProxyFactory(ReconnectingClientFactory):
     protocol = StdioProxyProtocol
     
-    def __init__(self, ID, IP):
+    def __init__(self, myID, IP):
         #start one unique server
         reactor.listenTCP(12345, CalendarServerFactory())
-        logging.info("Server%d Launched, my ip=%s" % (ID, IP))
+        logging.info("Server%d Launched, my ip=%s" % (myID, IP))
         self.clients={}
-        self.ID = ID 
 
     def buildProtocol(self, addr):
         #Consider expo delay for reconnection

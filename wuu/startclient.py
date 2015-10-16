@@ -26,7 +26,6 @@ if len(sys.argv) > 1:
 #Note only creation once
 spfactory =  StdioProxyFactory(Configuration.getMyID(), Configuration.getPublicIP())
 for ip in Configuration.IPTABLE:
-    
     reactor.connectTCP(ip, Configuration.PORT, spfactory)
 reactor.run()
 
