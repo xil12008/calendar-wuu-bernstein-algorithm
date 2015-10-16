@@ -11,7 +11,15 @@ from twisted.protocols.basic import LineReceiver
 from twisted.internet import reactor
 from sys import stdout
 
+from calendarclient import CalendarClient, CalendarClientFactory 
+from calendarserver import CalendarServer, CalendarServerFactory
+from proxyclient import StdioProxyFactory
+
 class CalendarServer(LineReceiver):
+    def __init__(self):
+        spfactory =  StdioProxyFactory()
+        reactor.connectTCP("52.88.17.250", 12345, spfactory)    
+
     def connectionMade(self):
         stdout.write("Connection Made from %s\n" \
                          % self.transport.getPeer())
