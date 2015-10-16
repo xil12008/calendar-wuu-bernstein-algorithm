@@ -45,7 +45,8 @@ class DataForwardingProtocol(protocol.Protocol):
         if self.normalizeNewlines:
             data = re.sub(r"(\r\n|\n)", "\r\n", data)
         if self.output:
-            self.send2Node(1,data)
+            self.handlingUserInput(data)
+            #self.send2Node(1,data)
             #self.multicast(data)
            
     def multicast(self, data):
@@ -53,6 +54,7 @@ class DataForwardingProtocol(protocol.Protocol):
         for name, protocol in self.clients.iteritems():
             if protocol != self:
                 protocol.output.write("%s" %(data))
+        #Unreliabe: without any check 
 
     def send2Node(self, nodeId, data):
         for name, protocol in self.clients.iteritems():
@@ -62,7 +64,14 @@ class DataForwardingProtocol(protocol.Protocol):
         logging.warning("Message not sent because no connection found")
 
     def handlingUserInput(self, cmd):
-        return
+        cmd1 = cmd.strip()
+        if len(cmd1)<3:
+            logging.warning("format: cmd <calendar name>")
+            return
+        if cmd1[0:3]=="add":
+            logging.warning("add!")
+            self.multicast(cmd)
+            return
    
     def connectionMade(self):
         self.clients[self.name] = self 
@@ -107,12 +116,12 @@ class StdioProxyFactory(ReconnectingClientFactory):
         return StdioProxyProtocol(self.clients, addr)
    
     def clientConnectionLost(self, connector, reason):
-        logging.debug('Connection Lost. Reason: %s' % reason)
-        logging.info('Connection Lost.') 
+        logging.debug('One Connection Lost. Reason: %s' % reason)
+        logging.info('One Connection Lost.') 
         ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
 
     def clientConnectionFailed(self, connector, reason):
-        logging.debug('Connection failed. Reason: %s' % reason)
-        logging.info('Connection failed.') 
+        logging.debug('One Connection failed. Reason: %s' % reason)
+        logging.info('One Connection failed.') 
         ReconnectingClientFactory.clientConnectionFailed(self, connector,
                                                          reason)
