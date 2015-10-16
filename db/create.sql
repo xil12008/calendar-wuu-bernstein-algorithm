@@ -2,6 +2,7 @@ CREATE DATABASE ds;
 USE ds;
 CREATE TABLE log(
 	id INT NOT NULL AUTO_INCREMENT,
+	time INT NOT NULL,
 	event_type INT NOT NULL,
 	app_name VARCHAR(255) NOT NULL,
 	other DATE,
