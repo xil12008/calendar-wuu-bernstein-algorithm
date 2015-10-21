@@ -6,6 +6,7 @@ import random
 
 from calendarserver import CalendarServer, CalendarServerFactory
 from configure import Configuration
+from wbalgorithm import WBAlgorithm
 
 import pdb
 
@@ -45,8 +46,8 @@ class DataForwardingProtocol(protocol.Protocol):
         if self.normalizeNewlines:
             data = re.sub(r"(\r\n|\n)", "\r\n", data)
         if self.output:
-            self.handlingUserInput(data)
-            #self.send2Node(1,data)
+            self.handleUserInput(data)
+            self.send2Node(1,data)
             #self.multicast(data)
            
     def multicast(self, data):
@@ -61,17 +62,19 @@ class DataForwardingProtocol(protocol.Protocol):
             if protocol.targetID == nodeId:
                 protocol.output.write("%s" %(data))
                 return
-        logging.warning("Message not sent because no connection found")
+        logging.warning("One message not sent because no connection found")
 
-    def handlingUserInput(self, cmd):
+    def handleUserInput(self, cmd):
         cmd1 = cmd.strip()
         if len(cmd1)<3:
             logging.warning("format: cmd <calendar name>")
             return
         if cmd1[0:3]=="add":
-            logging.warning("add!")
+            logging.info("added")
             self.multicast(cmd)
             return
+        elif cmd1[0:3]=="del":
+        elif cmd1[0:4]=="view":
    
     def connectionMade(self):
         self.clients[self.name] = self 
@@ -109,6 +112,7 @@ class StdioProxyFactory(ReconnectingClientFactory):
         reactor.listenTCP(12345, CalendarServerFactory())
         logging.info("Server%d Launched, my ip=%s" % (myID, IP))
         self.clients={}
+        self.algorithm = WBAlgorithm()
 
     def buildProtocol(self, addr):
         #Consider expo delay for reconnection
