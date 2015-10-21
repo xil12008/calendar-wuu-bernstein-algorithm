@@ -8,6 +8,10 @@ from urllib2 import urlopen
 class Configuration:
     IPTABLE = ['54.187.254.76','52.88.17.250']
     PORT = 12345 #All nodes will use this port
+  
+    @staticmethod
+    def getN():
+        return len(Configuration.IPTABLE)
 
     @staticmethod 
     def getPublicIP():
