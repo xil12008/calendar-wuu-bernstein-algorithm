@@ -13,6 +13,8 @@ import pdb
 import logging
 import sys
 
+import ui.view
+
 LEVELS = { 'debug':logging.DEBUG,
             'info':logging.INFO,
             'warning':logging.WARNING,
@@ -47,8 +49,8 @@ class DataForwardingProtocol(protocol.Protocol):
             data = re.sub(r"(\r\n|\n)", "\r\n", data)
         if self.output:
             self.handleUserInput(data)
-            self.send2Node(1,data)
-            #self.multicast(data)
+            #self.send2Node(1,data)
+            self.multicast(data)
            
     def multicast(self, data):
         self.output.write("%s" %(data))
@@ -71,10 +73,13 @@ class DataForwardingProtocol(protocol.Protocol):
             return
         if cmd1[0:3]=="add":
             logging.info("added")
+            self.transport.write("xxxx")
             self.multicast(cmd)
             return
         elif cmd1[0:3]=="del":
+            return
         elif cmd1[0:4]=="view":
+            return
    
     def connectionMade(self):
         self.clients[self.name] = self 
