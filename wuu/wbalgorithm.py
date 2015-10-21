@@ -26,7 +26,8 @@ if len(sys.argv) > 1:
 
 class WBAlgorithm:
    def __init__(self):
-       pass
+       self.n = Configuration.getN()
+       self.matrix =  [[] for _ in range(self.n)]
 
    def onAdd(self):
        pass 

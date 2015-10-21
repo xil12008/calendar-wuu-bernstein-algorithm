@@ -4,9 +4,9 @@ from twisted.protocols.basic import LineReceiver
 from twisted.internet import reactor
 from sys import stdout
 
-from proxyclient import StdioProxyFactory
+from wuu.proxyclient import StdioProxyFactory
 
-from configure import Configuration 
+from wuu.configure import Configuration 
 
 import logging
 import sys

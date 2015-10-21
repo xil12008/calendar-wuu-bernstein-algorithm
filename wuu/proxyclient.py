@@ -13,7 +13,7 @@ import pdb
 import logging
 import sys
 
-import ui.view
+from ui.view import View
 
 LEVELS = { 'debug':logging.DEBUG,
             'info':logging.INFO,
