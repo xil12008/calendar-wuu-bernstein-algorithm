@@ -15,6 +15,8 @@ import json
 
 import random
 
+from db.db import Db
+
 LEVELS = { 'debug':logging.DEBUG,
             'info':logging.INFO,
             'warning':logging.WARNING,
@@ -29,8 +31,12 @@ if len(sys.argv) > 1:
 
 class Event:
     def __init__(self, time, node, content):
+        dc = DataConn()
         self.name = random.getrandbits(128) #Name of the event
-        self.time = 1 #@TODO get the newest Lamport timestamp
+        self.time = dc.getTime(node, node)+1 #@TODO get the newest Lamport timestamp
+        dc.updateTime(node,node,self.time)
+        dc.db.close()
+
         self.node = Configuration.getMyID()  # where an event occurs
         self.content = content
         logging.debug("Event %s created." % self.name)
@@ -41,6 +47,7 @@ class WBAlgorithm:
        self.matrix =  [[0 for _ in range(self.n) ] for _ in range(self.n)]
        self.C = 0
        self.ID = Configuration.getMyID()
+       self.dc = DataConn()
 
    def __printMatrix(self):
        for i in range(self.n):
@@ -49,7 +56,7 @@ class WBAlgorithm:
            logging.debug("---")
   
    def addEvent(self, event):
-       self.log.append(event)
+       self.dc.addLog(event.name,event.node,event.time,event.content)
        #@TODO put the new event into database
    
    def __hasRec(self, event, k):
@@ -59,7 +66,7 @@ class WBAlgorithm:
    #Prepare the message to be send to node k  
    def sendMsg2Node(self, nodek):
        #@TODO load log from database
-       log = 
+       log = self.dc.getLogs(0,self.time)
        NP = {} #partial log
        ES = {} #event lists
        for event in log:
@@ -77,7 +84,11 @@ class WBAlgorithm:
        logging.debug("Received Json: %s" % jsonMsg)
        #@TODO merge log in database
        data = json.loads(jsonMsg)
-       m = data["matrix"] 
+       m = data["matrix"]
+       events = data["events"]
+       for key, value in events.iteritems():
+           dc.addLog(key,value[1],value[0],value[2])
+        
        for j in range(self.n):
            self.matrix[self.ID][j] = max( self.matrix[self.ID][j], m[self.ID][j]) 
        for j in range(self.n):
