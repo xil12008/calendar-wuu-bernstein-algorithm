@@ -7,11 +7,11 @@ class DataConn():
         passwd="", # your password
         db="ds") # name of the data base
 
-    def addLog(self, time_stamp, event_type, app_name):
+    def addLog(self, time_stamp, log):
         add_log = ("INSERT INTO logs "
-            "(time_stamp, event_type, app_name) "
-            "VALUES (%s, %s, %s)")
-        data_log = (time_stamp, event_type, app_name)
+            "(time_stamp, log) "
+            "VALUES (%s, %s)")
+        data_log = (time_stamp, log)
         
         cur = self.db.cursor()
         cur.execute(add_log,data_log)
@@ -20,7 +20,7 @@ class DataConn():
     
     def getLogs(self, start_stamp, end_stamp):
         cur = self.db.cursor()
-        query = ("SELECT time_stamp, event_type, app_name FROM logs "
+        query = ("SELECT time_stamp, log FROM logs "
             "WHERE time_stamp >= %s AND time_stamp <= %s ")
         cur.execute(query,(start_stamp,end_stamp))
         logs = cur.fetchall()
@@ -92,14 +92,14 @@ class DataConn():
 
 def Test():
     dc = DataConn()
-    dc.addLog(0,1,'test2')
-    dc.addLog(1,1,'test2')
-    dc.addLog(2,1,'test2')
-    dc.addLog(3,1,'test2')
-    dc.addLog(4,1,'test2')
+    dc.addLog(0,'add play Sun 10:00am 1:00pm 1,2')
+    dc.addLog(1,'add play Sun 10:00am 1:00pm 1,3')
+    dc.addLog(2,'view')
+    dc.addLog(3,'del play')
+    dc.addLog(4,'sxx')
     logs = dc.getLogs(1,3)
-    for (time_stamp, event_type, app_name) in logs:
-        print (time_stamp, event_type, app_name)
+    for (time_stamp, log) in logs:
+        print (time_stamp, log)
     
     dc.addApp('test', 1, 0, 1, '1 2')
     dc.addApp('test2', 1, 2, 4, '2 3')
