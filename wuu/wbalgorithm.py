@@ -30,13 +30,10 @@ if len(sys.argv) > 1:
     logging.basicConfig(level=level)
 
 class Event:
-    def __init__(self, content):
-        dc = DataConn()
-        self.name = random.getrandbits(32) #Name of the event
-        self.node = Configuration.getMyID()
-        self.time = dc.getTime(self.node, self.node)+1 #@TODO get the newest Lamport timestamp
-        dc.updateTime(self.node, self.node,self.time)
-        self.node = Configuration.getMyID()  # where an event occurs
+    def __init__(self, name, node, time, content):
+        self.name = name
+        self.node = node
+        self.time = time
         self.content = content
         logging.debug("Event %s created." % self.name)
 
@@ -56,7 +53,9 @@ class WBAlgorithm:
            logging.debug("---")
   
    def addEvent(self, event):
-       self.dc.addLog(event.name,event.node,event.time,event.content)
+       return
+       #self.dc.updateTime(event.node, event.node,event.time)
+       #self.dc.addLog(event.name,event.node,event.time,event.content)
        #@TODO put the new event into database
    
    def __hasRec(self, event, k):
@@ -70,6 +69,7 @@ class WBAlgorithm:
        NP = {} #partial log
        ES = {} #event lists
        for (id,name,time,content) in log:
+           event = Event(id,name,time,content)
            if not self.__hasRec(event, nodek):
               ES[event.name] = (event.time, event.node, event.content)  
               logging.debug((event.time, event.node, event.content))
@@ -121,11 +121,12 @@ class WBAlgorithm:
        pass
 
 def test():
-    e1 = Event("whatever1")
-    e2 = Event("whatever2")
-    e3 = Event("whatever3")
-    e4 = Event("whatever4")
-    e5 = Event("whatever5")
+    node = Node()
+    e1 = node.createEvent("whatever1")
+    e2 = node.createEvent("whatever2")
+    e3 = node.createEvent("whatever3")
+    e4 = node.createEvent("whatever4")
+    e5 = node.createEvent("whatever5")
     wb = WBAlgorithm()
     wb.addEvent(e1)
     wb.addEvent(e2)
@@ -134,5 +135,16 @@ def test():
     wb.addEvent(e5)
     msg = wb.sendMsg2Node(0)
     wb.receiveMsg(msg)
+
+class Node():
+    dc = DataConn()
+    node = Configuration.getMyID()
+    def createEvent(self,content):
+        name = random.getrandbits(32)
+        time = self.dc.getTime(self.node,self.node)+1
+        event = Event(name,self.node,time,content)
+        self.dc.updateTime(self.node, self.node,time)
+        self.dc.addLog(event.name,event.node,event.time,event.content)
+        return event
 
 test()
