@@ -6,7 +6,7 @@ from urllib2 import urlopen
 '''
 
 class Configuration:
-    IPTABLE = ['54.187.254.76','52.88.17.250']
+    IPTABLE = ['52.89.158.138','54.175.50.224','57.175.50.224','54.175.50.223']
     PORT = 12345 #All nodes will use this port
   
     @staticmethod
