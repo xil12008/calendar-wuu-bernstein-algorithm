@@ -1,15 +1,14 @@
 CREATE DATABASE ds;
 USE ds;
-CREATE TABLE log(
+CREATE TABLE logs(
 	id INT NOT NULL AUTO_INCREMENT,
 	time_stamp INT NOT NULL,
-	event_type INT NOT NULL,
-	app_name VARCHAR(255) NOT NULL,
-	other DATE,
+	node INT NOT NULL,
+	log VARCHAR(255) NOT NULL,
 	PRIMARY KEY ( id ));
-CREATE TABLE dictionary(
+CREATE TABLE appointments(
 	id INT NOT NULL AUTO_INCREMENT,
-	name VARCHAR(255) NOT NULL UNIQUE,
+	app_name VARCHAR(255) NOT NULL UNIQUE,
 	day INT NOT NULL,
 	start_time INT NOT NULL,
 	end_time INT NOT NUll,
@@ -18,8 +17,9 @@ CREATE TABLE dictionary(
 CREATE TABLE time(
 	id INT NOT NULL AUTO_INCREMENT,
 	node_id INT NOT NULL UNIQUE,
+	node0 INT NOT NULL,
 	node1 INT NOT NULL,
 	node2 INT NOT NULL,
 	node3 INT NOT NULL,
-	node4 INT NOT NULL,
 	PRIMARY KEY ( id ));
+
