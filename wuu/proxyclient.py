@@ -67,19 +67,22 @@ class DataForwardingProtocol(protocol.Protocol):
         logging.warning("One message not sent because no connection found")
 
     def handleUserInput(self, cmd):
-        cmd1 = cmd.strip()
-        if len(cmd1)<3:
-            logging.warning("format: cmd <calendar name>")
-            return
-        if cmd1[0:3]=="add":
-            logging.info("added")
-            self.transport.write("xxxx")
-            self.multicast(cmd)
-            return
-        elif cmd1[0:3]=="del":
-            return
-        elif cmd1[0:4]=="view":
-            return
+        view = View()
+        cmds = cmd.strip().split()
+        if cmds[0]=="add":
+            if len(cmds)!=6:
+                warning = "format: add <calendar name> <day> <start time> <end time> <participant list>"
+                logging.warning(warning)
+                return
+            self.transport.write(cmds[0]+cmds[1]+str(view.days_int(cmds[2]))+str(view.time_int(cmds[3]))+str(view.time_int(cmds[4]))+cmds[5]+"\r\n")
+        elif cmds[0]=="del":
+            if len(cmds)!=2:
+                warning = "format: del <calendar name>"
+                logging.warning(warning)
+                return
+            self.transport.write(cmds[0]+cmds[1])
+        elif cmds[0]=="view":
+            self.transport.write(cmds[0])
    
     def connectionMade(self):
         self.clients[self.name] = self 

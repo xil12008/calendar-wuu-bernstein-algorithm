@@ -49,5 +49,3 @@ def Test():
     print v.time_str(v.time_int(11,30,"pm"))
 
 
-
-Test()
