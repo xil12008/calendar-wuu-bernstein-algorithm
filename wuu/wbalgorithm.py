@@ -34,7 +34,6 @@ class Event:
         dc = DataConn()
         self.name = random.getrandbits(128) #Name of the event
         self.node = Configuration.getMyID()
-        print self.node
         self.time = dc.getTime(self.node, self.node)+1 #@TODO get the newest Lamport timestamp
         dc.updateTime(self.node, self.node,self.time)
         self.node = Configuration.getMyID()  # where an event occurs
@@ -67,7 +66,7 @@ class WBAlgorithm:
    #Prepare the message to be send to node k  
    def sendMsg2Node(self, nodek):
        #@TODO load log from database
-       log = self.dc.getLogs(0,self.time)
+       log = self.dc.getLogs(0,sys.maxint)
        NP = {} #partial log
        ES = {} #event lists
        for event in log:
