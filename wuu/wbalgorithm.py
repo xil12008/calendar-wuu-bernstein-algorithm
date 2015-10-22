@@ -40,17 +40,16 @@ class Event:
 class WBAlgorithm:
    def __init__(self):
        self.n = Configuration.getN()
-       self.matrix =  [[0 for _ in range(self.n) ] for _ in range(self.n)]
        self.C = 0
        self.ID = Configuration.getMyID()
        self.dc = DataConn()
 
 
-   def __printMatrix(self):
-       for i in range(self.n):
-           for j in range(self.n):
-               logging.debug("%d %d = %d" %( i, j, self.matrix[i][j]))
-           logging.debug("---")
+   #def __printMatrix(self):
+   #    for i in range(self.n):
+   #        for j in range(self.n):
+   #            logging.debug("%d %d = %d" %( i, j, self.matrix[i][j]))
+   #        logging.debug("---")
   
    def addEvent(self, event):
        return
@@ -58,9 +57,9 @@ class WBAlgorithm:
        #self.dc.addLog(event.name,event.node,event.time,event.content)
        #@TODO put the new event into database
    
-   def __hasRec(self, event, k):
-       logging.debug("k=%d event.node=%d" %(k, event.node))
-       return self.matrix[k][event.node] >= event.time
+   def __hasRec(self, matrix, event, k):
+       logging.debug("__hasRec: k=%d event.node=%d" %(k, event.node))
+       return matrix[k][event.node] >= event.time
  
    #Prepare the message to be send to node k  
    def sendMsg2Node(self, nodek):
@@ -68,12 +67,16 @@ class WBAlgorithm:
        log = self.dc.getLogs(0,sys.maxint)
        NP = {} #partial log
        ES = {} #event lists
+       matrix =  [[0 for _ in range(self.n) ] for _ in range(self.n)]
+       for i in range(self.n):
+           for j in range(self.n):
+               matrix[i][j] = self.dc.getTime(i, j)
        for (id,name,time,content) in log:
            event = Event(id,name,time,content)
-           if not self.__hasRec(event, nodek):
+           if not self.__hasRec(matrix, event, nodek):
               ES[event.name] = (event.time, event.node, event.content)  
               logging.debug((event.time, event.node, event.content))
-       NP["matrix"] = self.matrix
+       NP["matrix"] = matrix
        NP["events"] = ES 
        NP["senderID"] = Configuration.getMyID() 
        NP["receiverID"] = nodek 
@@ -87,14 +90,20 @@ class WBAlgorithm:
        m = data["matrix"]
        events = data["events"]
        for key, value in events.iteritems():
-           dc.addLog(key,value[1],value[0],value[2])
+           self.dc.addLog(key,value[1],value[0],value[2])
         
+       matrix =  [[0 for _ in range(self.n) ] for _ in range(self.n)]
+       for i in range(self.n):
+           for j in range(self.n):
+               matrix[i][j] = self.dc.getTime(i, j)
        for j in range(self.n):
-           self.matrix[self.ID][j] = max( self.matrix[self.ID][j], m[self.ID][j]) 
+           matrix[self.ID][j] = max( matrix[self.ID][j], m[self.ID][j]) 
        for j in range(self.n):
            for k in range(self.n):  
-                self.matrix[j][k] = max( self.matrix[j][k], m[j][k]) 
-       self.__printMatrix()
+               matrix[j][k] = max( matrix[j][k], m[j][k]) 
+       for i in range(self.n):
+           for j in range(self.n):
+               self.dc.updateTime(i, j, matrix[i][j])
 
    def onAdd(self):
        pass 
@@ -128,11 +137,6 @@ def test():
     e4 = node.createEvent("whatever4")
     e5 = node.createEvent("whatever5")
     wb = WBAlgorithm()
-    wb.addEvent(e1)
-    wb.addEvent(e2)
-    wb.addEvent(e3)
-    wb.addEvent(e4)
-    wb.addEvent(e5)
     msg = wb.sendMsg2Node(0)
     wb.receiveMsg(msg)
 
@@ -140,7 +144,7 @@ class Node():
     dc = DataConn()
     node = Configuration.getMyID()
     def createEvent(self,content):
-        name = random.getrandbits(32)
+        name = random.getrandbits(5)
         time = self.dc.getTime(self.node,self.node)+1
         event = Event(name,self.node,time,content)
         self.dc.updateTime(self.node, self.node,time)

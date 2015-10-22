@@ -6,7 +6,7 @@ import random
 
 from calendarserver import CalendarServer, CalendarServerFactory
 from configure import Configuration
-from wbalgorithm import WBAlgorithm
+from tmp_wbalgorithm import WBAlgorithm
 
 import pdb
 
@@ -35,7 +35,7 @@ if len(sys.argv) > 1:
 #       instance of stdioProxyProtocol     .transport--> remote server
 
 class DataForwardingProtocol(protocol.Protocol):
-    def __init__(self, clients, addr):
+    def __init__(self, clients, algorithm, addr):
         self.clients = clients
         self.addr = addr
         self.IP = addr.host
@@ -43,6 +43,7 @@ class DataForwardingProtocol(protocol.Protocol):
         self.name = random.getrandbits(128)
         self.output = None
         self.normalizeNewlines = False
+        self.algorithm = algorithm 
 
     def dataReceived(self, data):
         if self.normalizeNewlines:
@@ -50,7 +51,7 @@ class DataForwardingProtocol(protocol.Protocol):
         if self.output:
             self.handleUserInput(data)
             #self.send2Node(1,data)
-            self.multicast(data)
+            #self.multicast(data)
            
     def multicast(self, data):
         self.output.write("%s" %(data))
@@ -70,11 +71,21 @@ class DataForwardingProtocol(protocol.Protocol):
         view = View()
         cmds = cmd.strip().split()
         if cmds[0]=="add":
+            pdb.set_trace()
             if len(cmds)!=6:
                 warning = "format: add <calendar name> <day> <start time> <end time> <participant list>"
                 logging.warning(warning)
                 return
-            self.transport.write(cmds[0]+cmds[1]+str(view.days_int(cmds[2]))+str(view.time_int(cmds[3]))+str(view.time_int(cmds[4]))+cmds[5]+"\r\n")
+            msg = cmds[0] +cmds[1] \
+                  +str(view.days_int(cmds[2])) \
+                  +str(view.time_int(cmds[3])) \
+                  +str(view.time_int(cmds[4])) \
+                  +cmds[5]
+
+            self.transport.write(msg)
+            for i in range(self.algorithm.n):
+                jsonmsg = self.algorithm.sendMsg2Node(msg, i) 
+                send2Node(i, jsonmsg)
         elif cmds[0]=="del":
             if len(cmds)!=2:
                 warning = "format: del <calendar name>"
@@ -92,11 +103,12 @@ class DataForwardingProtocol(protocol.Protocol):
             del self.clients[self.name]
 
 class StdioProxyProtocol(protocol.Protocol):
-    def __init__(self, clients, addr):
+    def __init__(self, clients, algorithm, addr):
         self.output = None
         self.clients = clients
         self.addr = addr
         self.normalizeNewlines = False
+        self.algorithm = algorithm 
 
     def dataReceived(self, data):
         if self.normalizeNewlines:
@@ -105,7 +117,7 @@ class StdioProxyProtocol(protocol.Protocol):
             self.output.write(data)
 
     def connectionMade(self):
-        inputForwarder = DataForwardingProtocol(self.clients, self.addr)
+        inputForwarder = DataForwardingProtocol(self.clients, self.algorithm, self.addr)
         inputForwarder.output = self.transport
         inputForwarder.normalizeNewlines = True
         stdioWrapper = stdio.StandardIO(inputForwarder)
@@ -116,16 +128,16 @@ class StdioProxyFactory(ReconnectingClientFactory):
     protocol = StdioProxyProtocol
     
     def __init__(self, myID, IP):
+        self.algorithm = WBAlgorithm()
         #start one unique server
-        reactor.listenTCP(12345, CalendarServerFactory())
+        reactor.listenTCP(12345, CalendarServerFactory(self.algorithm))
         logging.info("Server%d Launched, my ip=%s" % (myID, IP))
         self.clients={}
-        self.algorithm = WBAlgorithm()
 
     def buildProtocol(self, addr):
         #Consider expo delay for reconnection
         logging.info("Building Protocol addr=%s" % addr)
-        return StdioProxyProtocol(self.clients, addr)
+        return StdioProxyProtocol(self.clients, self.algorithm, addr)
    
     def clientConnectionLost(self, connector, reason):
         logging.debug('One Connection Lost. Reason: %s' % reason)
