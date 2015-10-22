@@ -41,7 +41,6 @@ class WBAlgorithm:
        self.matrix =  [[0 for _ in range(self.n) ] for _ in range(self.n)]
        self.C = 0
        self.ID = Configuration.getMyID()
-       self.log = []
 
    def __printMatrix(self):
        for i in range(self.n):
@@ -60,9 +59,9 @@ class WBAlgorithm:
    #Prepare the message to be send to node k  
    def sendMsg2Node(self, nodek):
        #@TODO load log from database
+       log = 
        NP = {} #partial log
-       #@TODO load log from database
-       for event in self.log:
+       for event in log:
            if not self.__hasRec(event, nodek):
               NP[event.name] = (event.time, event.node, event.content)  
               logging.debug((event.time, event.node, event.content))
