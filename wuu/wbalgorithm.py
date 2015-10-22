@@ -15,7 +15,7 @@ import json
 
 import random
 
-from db.db import Db
+from db.db import DataConn 
 
 LEVELS = { 'debug':logging.DEBUG,
             'info':logging.INFO,
@@ -30,11 +30,13 @@ if len(sys.argv) > 1:
     logging.basicConfig(level=level)
 
 class Event:
-    def __init__(self, time, node, content):
+    def __init__(self, content):
         dc = DataConn()
         self.name = random.getrandbits(128) #Name of the event
-        self.time = dc.getTime(node, node)+1 #@TODO get the newest Lamport timestamp
-        dc.updateTime(node,node,self.time)
+        self.node = Configuration.getMyID()
+        pdb.set_trace()
+        self.time = dc.getTime(self.node, self.node)+1 #@TODO get the newest Lamport timestamp
+        dc.updateTime(self.node, self.node,self.time)
         dc.db.close()
 
         self.node = Configuration.getMyID()  # where an event occurs
@@ -48,6 +50,7 @@ class WBAlgorithm:
        self.C = 0
        self.ID = Configuration.getMyID()
        self.dc = DataConn()
+
 
    def __printMatrix(self):
        for i in range(self.n):
@@ -121,11 +124,11 @@ class WBAlgorithm:
        pass
 
 def test():
-    e1 = Event(1, Configuration.getMyID(), "content1")
-    e2 = Event(2, Configuration.getMyID(), "content2")
-    e3 = Event(3, Configuration.getMyID(), "content3")
-    e4 = Event(4, Configuration.getMyID(), "content4")
-    e5 = Event(5, Configuration.getMyID(), "content5")
+    e1 = Event("whatever1")
+    e2 = Event("whatever2")
+    e3 = Event("whatever3")
+    e4 = Event("whatever4")
+    e5 = Event("whatever5")
     wb = WBAlgorithm()
     wb.addEvent(e1)
     wb.addEvent(e2)
