@@ -116,4 +116,3 @@ def Test():
 
     dc.db.close()
 
-Test()
