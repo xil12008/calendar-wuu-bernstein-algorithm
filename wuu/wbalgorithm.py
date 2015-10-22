@@ -28,7 +28,7 @@ if len(sys.argv) > 1:
     logging.basicConfig(level=level)
 
 class Event:
-    def __init__(self, name, time, node, content):
+    def __init__(self, time, node, content):
         self.name = random.getrandbits(128) #Name of the event
         self.time = 1 #@TODO get the newest Lamport timestamp
         self.node = Configuration.getMyID()  # where an event occurs
@@ -61,12 +61,15 @@ class WBAlgorithm:
        #@TODO load log from database
        log = 
        NP = {} #partial log
+       ES = {} #event lists
        for event in log:
            if not self.__hasRec(event, nodek):
-              NP[event.name] = (event.time, event.node, event.content)  
+              ES[event.name] = (event.time, event.node, event.content)  
               logging.debug((event.time, event.node, event.content))
        NP["matrix"] = self.matrix
+       NP["events"] = ES 
        NP["senderID"] = Configuration.getMyID() 
+       NP["receiverID"] = nodek 
        logging.debug(json.dumps(NP))
        return json.dumps(NP)
  
@@ -107,11 +110,11 @@ class WBAlgorithm:
        pass
 
 def test():
-    e1 = Event("name1", 1, Configuration.getMyID(), "content1")
-    e2 = Event("name2", 2, Configuration.getMyID(), "content2")
-    e3 = Event("name3", 3, Configuration.getMyID(), "content3")
-    e4 = Event("name4", 4, Configuration.getMyID(), "content4")
-    e5 = Event("name5", 5, Configuration.getMyID(), "content5")
+    e1 = Event(1, Configuration.getMyID(), "content1")
+    e2 = Event(2, Configuration.getMyID(), "content2")
+    e3 = Event(3, Configuration.getMyID(), "content3")
+    e4 = Event(4, Configuration.getMyID(), "content4")
+    e5 = Event(5, Configuration.getMyID(), "content5")
     wb = WBAlgorithm()
     wb.addEvent(e1)
     wb.addEvent(e2)
