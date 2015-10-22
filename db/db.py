@@ -79,6 +79,7 @@ class DataConn():
             "WHERE node_id = %s")
         cur.execute(query,(node1, node0))
         (time,) = cur.fetchone()
+        self.db.commit()
         cur.close()
         return time
 
@@ -87,6 +88,7 @@ class DataConn():
         query = ("UPDATE time SET node%s=%s WHERE node_id=%s")
         data_time = (node1, time, node0)
         cur.execute(query,data_time)
+        self.db.commit()
         cur.close()
 
 
@@ -109,10 +111,8 @@ def Test():
     for (app_name, day, start_time, end_time, participants) in apps:
         print (app_name, day, start_time, end_time, participants)
     
-    dc.initTime()
     dc.updateTime(0,1,3)
     time = dc.getTime(0,1)
     print time
 
     dc.db.close()
-
