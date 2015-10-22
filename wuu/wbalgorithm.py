@@ -150,5 +150,3 @@ class Node():
         self.dc.updateTime(self.node, self.node,time)
         self.dc.addLog(event.name,event.node,event.time,event.content)
         return event
-
-test()
