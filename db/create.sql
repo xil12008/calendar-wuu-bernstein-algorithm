@@ -23,3 +23,7 @@ CREATE TABLE time(
 	node3 INT NOT NULL,
 	PRIMARY KEY ( id ));
 
+INSERT INTO time (node_id, node0, node1, node2, node3) VALUES (0,0,0,0,0);
+INSERT INTO time (node_id, node0, node1, node2, node3) VALUES (1,0,0,0,0);
+INSERT INTO time (node_id, node0, node1, node2, node3) VALUES (2,0,0,0,0);
+INSERT INTO time (node_id, node0, node1, node2, node3) VALUES (3,0,0,0,0);
