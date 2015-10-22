@@ -84,11 +84,9 @@ class DataForwardingProtocol(protocol.Protocol):
                   +cmds[5]
             #self.transport.write(msg)
             e = self.node.createEvent(msg)
-            #for i in range(self.algorithm.n):
-            #    jsonmsg = self.algorithm.sendMsg2Node(i) 
-            #    self.send2Node(i, jsonmsg)
-            jsonmsg = self.algorithm.sendMsg2Node(1) 
-            self.send2Node(1, jsonmsg)
+            for i in range(self.algorithm.n):
+                jsonmsg = self.algorithm.sendMsg2Node(i) 
+                self.send2Node(i, jsonmsg)
         elif cmds[0]=="del":
             if len(cmds)!=2:
                 warning = "format: del <calendar name>"
