@@ -2,8 +2,8 @@ CREATE DATABASE ds;
 USE ds;
 CREATE TABLE logs(
 	id INT NOT NULL AUTO_INCREMENT,
-	time_stamp INT NOT NULL,
 	node INT NOT NULL,
+	time_stamp INT NOT NULL,
 	log VARCHAR(255) NOT NULL,
 	PRIMARY KEY ( id ));
 CREATE TABLE appointments(

@@ -7,11 +7,11 @@ class DataConn():
         passwd="", # your password
         db="ds") # name of the data base
 
-    def addLog(self, node, time_stamp, log):
-        add_log = ("INSERT INTO logs "
-            "(node, time_stamp, log) "
-            "VALUES (%s, %s, %s)")
-        data_log = (node, time_stamp, log)
+    def addLog(self, id, node, time_stamp, log):
+        add_log = ("INSERT IGNORE INTO logs "
+            "(id, node, time_stamp, log) "
+            "VALUES (%s,%s, %s, %s)")
+        data_log = (id, node, time_stamp, log)
         
         cur = self.db.cursor()
         cur.execute(add_log,data_log)
@@ -92,11 +92,11 @@ class DataConn():
 
 def Test():
     dc = DataConn()
-    dc.addLog(1,0,'add play Sun 10:00am 1:00pm 1,2')
-    dc.addLog(2,1,'add play Sun 10:00am 1:00pm 1,3')
-    dc.addLog(3,2,'view')
-    dc.addLog(4,3,'del play')
-    dc.addLog(1,4,'sxx')
+    dc.addLog(1, 1,0,'add play Sun 10:00am 1:00pm 1,2')
+    dc.addLog(1, 1,1,'add play Sun 10:00am 1:00pm 1,3')
+    dc.addLog(2, 3,2,'view')
+    dc.addLog(3, 4,3,'del play')
+    dc.addLog(4, 1,4,'sxx')
     logs = dc.getLogs(1,3)
     for event in logs:
         print event
