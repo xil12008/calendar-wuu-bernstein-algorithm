@@ -89,6 +89,13 @@ class WBAlgorithm:
        data = json.loads(jsonMsg)
        m = data["matrix"]
        events = data["events"]
+
+       #fetch from local database
+       matrix =  [[0 for _ in range(self.n) ] for _ in range(self.n)]
+       for i in range(self.n):
+           for j in range(self.n):
+               matrix[i][j] = self.dc.getTime(i, j)
+
        #events ranked by target node's lamport timestamp
        eventslist = [] 
        for key, value in events.iteritems():
@@ -107,10 +114,6 @@ class WBAlgorithm:
                    logging.warning("Database error..."); 
         
        #NOTE: matrix should be updated AFTER above events has been executed.
-       matrix =  [[0 for _ in range(self.n) ] for _ in range(self.n)]
-       for i in range(self.n):
-           for j in range(self.n):
-               matrix[i][j] = self.dc.getTime(i, j)
        for j in range(self.n):
            matrix[self.ID][j] = max( matrix[self.ID][j], m[data["senderID"]][j]) 
        for j in range(self.n):
