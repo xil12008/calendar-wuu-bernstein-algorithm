@@ -56,6 +56,16 @@ class DataConn():
         self.db.commit()
         cur.close()
 
+    def getParticip(self, day, start_time, end_time):
+        cur = self.db.cursor()
+        query = ("SELECT participants FROM appointments "
+            "WHERE day = %s AND start_time >= %s AND end_time <=%s ")
+        data = (day, start_time, end_time)
+        cur.execute(query,data)
+        particip = cur.fetchall()
+        cur.close()
+        return particip
+
     def initTime(self):
         init_time = ("INSERT INTO time "
             "(node_id, node0, node1, node2, node3) "
@@ -106,6 +116,11 @@ def Test():
     dc.addApp('test', 1, 0, 1, '1 2')
     dc.addApp('test2', 1, 2, 4, '2 3')
     dc.addApp('test3', 1, 2, 4, '3 4')
+    particip = dc.getParticip(1, 2, 4)
+    for (nodes,) in particip:
+        print "particip:\t"
+        print nodes
+
     dc.delApp('test2')
     apps = dc.getApps()
     for (app_name, day, start_time, end_time, participants) in apps:
@@ -116,3 +131,4 @@ def Test():
     print time
 
     dc.db.close()
+
