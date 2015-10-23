@@ -77,10 +77,10 @@ class DataForwardingProtocol(protocol.Protocol):
                 warning = "format: add <calendar name> <day> <start time> <end time> <participant list>"
                 logging.warning(warning)
                 return
-            msg = cmds[0] +cmds[1] \
-                  +str(view.days_int(cmds[2])) \
-                  +str(view.time_int(cmds[3])) \
-                  +str(view.time_int(cmds[4])) \
+            msg = cmds[0] + "|" + cmds[1] + "|"  \
+                  +str(view.days_int(cmds[2])) + "|" \
+                  +str(view.time_int(cmds[3])) + "|"  \
+                  +str(view.time_int(cmds[4])) + "|"  \
                   +cmds[5]
             #self.transport.write(msg)
             e = self.node.createEvent(msg)
@@ -92,9 +92,11 @@ class DataForwardingProtocol(protocol.Protocol):
                 warning = "format: del <calendar name>"
                 logging.warning(warning)
                 return
-            self.transport.write(cmds[0]+cmds[1])
+            e = self.node.createEvent(cmds[0] + "|" + cmds[1])
         elif cmds[0]=="view":
             self.transport.write(cmds[0])
+
+        self.transport.write(">>>")
    
     def connectionMade(self):
         self.clients[self.name] = self 
