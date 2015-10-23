@@ -139,6 +139,7 @@ class StdioProxyFactory(ReconnectingClientFactory):
 
     def buildProtocol(self, addr):
         #Consider expo delay for reconnection
+        self.resetDelay()
         logging.info("Building Protocol addr=%s" % addr)
         return StdioProxyProtocol(self.clients, self.algorithm, self.node, addr)
    
