@@ -106,6 +106,9 @@ class WBAlgorithm:
                self.dc.updateTime(i, j, matrix[i][j])
 
    def onAdd(self):
+       #Insert an appointment
+       #@TODO check conflict locally
+       #
        pass 
 
    def onDelete(self):
