@@ -89,6 +89,7 @@ class WBAlgorithm:
        data = json.loads(jsonMsg)
        m = data["matrix"]
        events = data["events"]
+       sender = data["senderID"]
 
        #fetch from local database
        matrix =  [[0 for _ in range(self.n) ] for _ in range(self.n)]
@@ -106,7 +107,7 @@ class WBAlgorithm:
        for ele in rankedevents:
                  #Event(name, node, time, content)
            event = Event(key, ele[1], ele[0], ele[2])
-           if not self.__hasRec(matrix, event, nodek):
+           if not self.__hasRec(matrix, event, sender):
                try:
                    self.dc.addLog(ele[3],ele[1],ele[0],ele[2])
                    node.appOperation(ele[2]) #execute the operation
