@@ -13,8 +13,9 @@ from sys import stdout
 from configure import Configuration
 
 class CalendarServer(LineReceiver):
-    def __init__(self, algorithm):
+    def __init__(self, algorithm, node):
         self.algorithm = algorithm   
+        self.node = node
 
     def connectionMade(self):
         stdout.write("Connection Made from %s\n" \
@@ -27,12 +28,13 @@ class CalendarServer(LineReceiver):
 
     def lineReceived(self, line):
         stdout.write("Server%d Received Data: %s\n" %( Configuration.getMyID(), line))
-        self.algorithm.receiveMsg(line)
+        self.algorithm.receiveMsg(line, self.node)
 
 class CalendarServerFactory(Factory):
-    def __init__(self, algorithm):
+    def __init__(self, algorithm, node):
         self.algorithm = algorithm
+        self.node = node
 
     def buildProtocol(self, addr):
-        return CalendarServer(self.algorithm)
+        return CalendarServer(self.algorithm, self.node)
 

@@ -93,9 +93,11 @@ class DataForwardingProtocol(protocol.Protocol):
                 logging.warning(warning)
                 return
             e = self.node.createEvent(cmds[0] + "|" + cmds[1])
+            for i in range(self.algorithm.n):
+                jsonmsg = self.algorithm.sendMsg2Node(i) 
+                self.send2Node(i, jsonmsg)
         elif cmds[0]=="view":
-            self.transport.write(cmds[0])
-
+            self.transport.write("View is under development.\n")
         self.transport.write(">>>")
    
     def connectionMade(self):
@@ -135,7 +137,7 @@ class StdioProxyFactory(ReconnectingClientFactory):
         self.algorithm = WBAlgorithm()
         self.node = Node()
         #start one unique server
-        reactor.listenTCP(12345, CalendarServerFactory(self.algorithm))
+        reactor.listenTCP(12345, CalendarServerFactory(self.algorithm, self.node))
         logging.info("Server%d Launched, my ip=%s" % (myID, IP))
         self.clients={}
 
