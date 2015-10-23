@@ -93,12 +93,20 @@ class WBAlgorithm:
        eventslist = [] 
        for key, value in events.iteritems():
            #value[0:3] is (event.time, event.node, event.content)  
+           #               ele[0]      ele[1]      ele[2]
            eventslist.append((value[0], value[1], value[2], key))
        rankedevents = sorted(eventslist) 
        for ele in rankedevents:
-           self.dc.addLog(ele[3],ele[1],ele[0],ele[2])
-           node.appOperation(ele[2]) #execute the operation
+                 #Event(name, node, time, content)
+           event = Event(key, ele[1], ele[0], ele[2])
+           if not self.__hasRec(matrix, event, nodek):
+               try:
+                   self.dc.addLog(ele[3],ele[1],ele[0],ele[2])
+                   node.appOperation(ele[2]) #execute the operation
+               except:
+                   logging.warning("Database error..."); 
         
+       #NOTE: matrix should be updated AFTER above events has been executed.
        matrix =  [[0 for _ in range(self.n) ] for _ in range(self.n)]
        for i in range(self.n):
            for j in range(self.n):
