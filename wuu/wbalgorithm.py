@@ -134,9 +134,9 @@ class WBAlgorithm:
 
 def test():
     node = Node()
-    e1 = node.createEvent("whatever1")
-    e2 = node.createEvent("whatever2")
-    e3 = node.createEvent("whatever3")
+    e1 = node.createEvent("add|play|0|10|20|1,2")
+    e2 = node.createEvent("add|play2|0|10|20|1,2")
+    e3 = node.createEvent("del|play")
     e4 = node.createEvent("whatever4")
     e5 = node.createEvent("whatever5")
     wb = WBAlgorithm()
@@ -152,4 +152,19 @@ class Node():
         event = Event(name,self.node,time,content)
         self.dc.updateTime(self.node, self.node,time)
         self.dc.addLog(event.name,event.node,event.time,event.content)
+        self.appOperation(content)
         return event
+    def appOperation(self,content):
+        lists = content.split("|")
+        if len(lists)==6 and lists[0]=="add":
+            app_name = lists[1]
+            app_day = lists[2]
+            start_time = lists[3]
+            end_time = lists[4]
+            participants = lists[5]
+            self.dc.addApp(app_name,app_day,start_time,end_time, participants)
+        elif len(lists)==2 and lists[0]=="del":
+            app_name = lists[1]
+            self.dc.delApp(app_name)
+
+test()
