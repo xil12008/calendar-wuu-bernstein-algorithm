@@ -97,7 +97,7 @@ class WBAlgorithm:
            for j in range(self.n):
                matrix[i][j] = self.dc.getTime(i, j)
        for j in range(self.n):
-           matrix[self.ID][j] = max( matrix[self.ID][j], m[self.ID][j]) 
+           matrix[self.ID][j] = max( matrix[self.ID][j], m[data["senderID"]][j]) 
        for j in range(self.n):
            for k in range(self.n):  
                matrix[j][k] = max( matrix[j][k], m[j][k]) 
