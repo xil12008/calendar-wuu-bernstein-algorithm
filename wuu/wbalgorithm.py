@@ -147,7 +147,7 @@ class Node():
     dc = DataConn()
     node = Configuration.getMyID()
     def createEvent(self,content):
-        name = random.getrandbits(5)
+        name = random.getrandbits(30)
         time = self.dc.getTime(self.node,self.node)+1
         event = Event(name,self.node,time,content)
         self.dc.updateTime(self.node, self.node,time)
