@@ -89,10 +89,15 @@ class WBAlgorithm:
        data = json.loads(jsonMsg)
        m = data["matrix"]
        events = data["events"]
+       #events ranked by target node's lamport timestamp
+       eventslist = [] 
        for key, value in events.iteritems():
-           self.dc.addLog(key,value[1],value[0],value[2])
-           node.appOperation(value[2]) #execute the operation
            #value[0:3] is (event.time, event.node, event.content)  
+           eventslist.append((value[0], value[1], value[2], key))
+       rankedevents = sorted(eventslist) 
+       for ele in rankedevents:
+           self.dc.addLog(ele[3],ele[1],ele[0],ele[2])
+           node.appOperation(ele[2]) #execute the operation
         
        matrix =  [[0 for _ in range(self.n) ] for _ in range(self.n)]
        for i in range(self.n):
