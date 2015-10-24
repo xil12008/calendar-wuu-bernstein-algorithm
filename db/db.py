@@ -59,8 +59,8 @@ class DataConn():
     def getParticip(self, day, start_time, end_time):
         cur = self.db.cursor()
         query = ("SELECT participants FROM appointments "
-            "WHERE day = %s AND start_time >= %s AND end_time <=%s ")
-        data = (day, start_time, end_time)
+            "WHERE day = %s AND (start_time < %s AND end_time > %s) ")
+        data = (day, end_time, start_time)
         cur.execute(query,data)
         particip = cur.fetchall()
         cur.close()
@@ -116,7 +116,7 @@ def Test():
     dc.addApp('test', 1, 0, 1, '1 2')
     dc.addApp('test2', 1, 2, 4, '2 3')
     dc.addApp('test3', 1, 2, 4, '3 4')
-    particip = dc.getParticip(1, 2, 4)
+    particip = dc.getParticip(1, 1, 3)
     for (nodes,) in particip:
         print "particip:\t"
         print nodes
