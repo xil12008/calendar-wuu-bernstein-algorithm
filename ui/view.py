@@ -27,9 +27,8 @@ class View():
     def time_int(self, hour_minute_m):
         strs = hour_minute_m.strip().split(':')
         hour = int(strs[0])
-        minute = int(strs[1][0:1])
-        m = strs[1][2:]
-        
+        minute = int(strs[1][0:2])
+        m = strs[1][2:4]
         num=0
         if m=="pm" : num+=24
         num+=hour*2
@@ -38,6 +37,6 @@ class View():
 
 def Test():
     v = View()
-    print v.time_str(v.time_int("1:00pm"))
+    print v.time_str(v.time_int("1:30pm"))
 
 
