@@ -98,7 +98,7 @@ class DataForwardingProtocol(protocol.Protocol):
                 logging.warning(warning)
                 return
             e = self.node.createEvent(cmds[0] + "|" + cmds[1])
-            for i in range(self.algorithm.n):
+            for i in range(self.algorithm.n):#@TODO this line is broadcast  
                 jsonmsg = self.algorithm.sendMsg2Node(i) 
                 self.send2Node(i, jsonmsg)
         elif cmds[0]=="view":
@@ -132,6 +132,7 @@ class StdioProxyProtocol(protocol.Protocol):
             data = re.sub(r"(\r\n|\n)", "\r\n", data)
         if self.output:
             logging.info("Client Received : %s\n" % data)
+            #@TODO this.algorithm.receiveMsg()
             self.output.write(data)
 
     def connectionMade(self):

@@ -127,11 +127,20 @@ class WBAlgorithm:
 
        #After algorithm part, here we implement the conflict resolving
        #ALL events involved in conflicts should be deleted.
-       for conflictMsg in recvConflictEvents:
-           logging.info("Found conflict events in Msg: %s\n" % conflictMsg)
-           #create delete event
-           #put delete event into the log
-           #execute delete
+       if recvConflictEvents:
+           resultDelList = [] 
+           resultNodeList = [] 
+           for conflictMsg in recvConflictEvents:
+               logging.info("Found conflict events in Msg: %s\n" % conflictMsg)
+               tmp_lists = conflictMsg.split("|")
+               if len(timp_lists)==6 and tmp_lists[0]=="add":
+                   #add the name and participates
+                   resultDelList.append("del|"+tmp_lists[1])
+           return resultDelList
+       else:
+           return None
+
+           #put delete event into the log and execute delete
            #return the jsonmsg to various nodes 
             
 

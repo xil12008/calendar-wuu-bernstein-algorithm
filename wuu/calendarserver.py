@@ -54,11 +54,19 @@ class CalendarServer(LineReceiver):
 
     def lineReceived(self, line):
         stdout.write("Server%d Received Data: %s\n" %( Configuration.getMyID(), line))
-        self.algorithm.receiveMsg(line, self.node)
-
+        pdb.set_trace()
+        delMsgs = self.algorithm.receiveMsg(line, self.node)
+        #return the jsonmsg to various nodes 
         #send jsonmsg to nodes to notify them 
         #it's for conflicts
-        self.send2Node(0, "fake conflict notification")
+        #self.send2Node(0, "fake conflict notification")
+        if delMsgs:
+            for delMsg in delMsgs: 
+                #put delete event into the log and execute delete
+                e = self.node.createEvent(delMsg)
+            for i in range(self.algorithm.n):#@TODO this line is broadcast  
+                jsonmsg = self.algorithm.sendMsg2Node(i) 
+                self.send2Node(i, jsonmsg)
 
     def send2Node(self, nodeId, data):
         for name, protocol in self.users.iteritems():
