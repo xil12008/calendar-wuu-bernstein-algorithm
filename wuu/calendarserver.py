@@ -58,7 +58,6 @@ class CalendarServer(LineReceiver):
 
         #send jsonmsg to nodes to notify them 
         #it's for conflicts
-        pdb.set_trace()
         self.send2Node(0, "fake conflict notification")
 
     def send2Node(self, nodeId, data):
