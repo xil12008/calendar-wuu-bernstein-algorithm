@@ -193,6 +193,15 @@ class Node():
             start_time = lists[3]
             end_time = lists[4]
             participants = lists[5]
+            inParticip = False
+            for user in participants.split(","):
+                if user==self.node:
+                    inParticip = True
+                    break
+            if not inParticip:
+                logging.info("ID=%d, I am not in %s" %( self.node, content))
+                return False
+
             preParticipants = self.dc.getParticip(app_day,start_time,end_time)
             for (users,) in preParticipants:
                 for user in users.split(","):
