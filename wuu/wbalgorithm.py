@@ -160,6 +160,21 @@ def test():
 class Node():
     dc = DataConn()
     node = Configuration.getMyID()
+
+    def checkLocalConflict(self, content):
+        lists = content.split("|")
+        if len(lists)==6 and lists[0]=="add":
+            app_name = lists[1]
+            app_day = lists[2]
+            start_time = lists[3]
+            end_time = lists[4]
+            participants = lists[5]
+            preParticipants = self.dc.getParticip(app_day,start_time,end_time)
+            for (users,) in preParticipants:
+                for user in users.split(","):
+                    if user == str(self.node):
+                        return True;
+
     def createEvent(self,content):
         name = random.getrandbits(30)
         time = self.dc.getTime(self.node,self.node)+1
@@ -168,6 +183,7 @@ class Node():
         self.dc.addLog(event.name,event.node,event.time,event.content)
         self.appOperation(content)
         return event
+
     def appOperation(self,content):
         lists = content.split("|")
         if len(lists)==6 and lists[0]=="add":

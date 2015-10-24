@@ -83,10 +83,14 @@ class DataForwardingProtocol(protocol.Protocol):
                   +str(view.time_int(cmds[4])) + "|"  \
                   +cmds[5]
             #self.transport.write(msg)
-            e = self.node.createEvent(msg)
-            for i in range(self.algorithm.n):
-                jsonmsg = self.algorithm.sendMsg2Node(i) 
-                self.send2Node(i, jsonmsg)
+            #@TODO check conflict before insert, so there won't be local conflict
+            if not self.node.checkLocalConflict(msg):
+                e = self.node.createEvent(msg)
+                for i in range(self.algorithm.n):
+                    jsonmsg = self.algorithm.sendMsg2Node(i) 
+                    self.send2Node(i, jsonmsg)
+            else:
+                self.transport.write("Sorry, there is conflict. Try again.\n")
         elif cmds[0]=="del":
             if len(cmds)!=2:
                 warning = "format: del <calendar name>"
