@@ -32,7 +32,7 @@ class CalendarServer(LineReceiver):
 
         #send jsonmsg to nodes to notify them 
         #it's for conflicts
-        send2Node(0, "fake conflict notification")
+        self.send2Node(0, "fake conflict notification")
 
     def send2Node(self, nodeId, data):
         for name, protocol in self.clients.iteritems():
