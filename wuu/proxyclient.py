@@ -131,6 +131,7 @@ class StdioProxyProtocol(protocol.Protocol):
         if self.normalizeNewlines:
             data = re.sub(r"(\r\n|\n)", "\r\n", data)
         if self.output:
+            logging.info("Client Received : %s\n" % data)
             self.output.write(data)
 
     def connectionMade(self):
@@ -155,7 +156,7 @@ class StdioProxyFactory(ReconnectingClientFactory):
 
     def buildProtocol(self, addr):
         #Consider expo delay for reconnection
-        self.resetDelay()
+        #self.resetDelay()
         logging.info("Building Protocol addr=%s" % addr)
         return StdioProxyProtocol(self.clients, self.algorithm, self.node, addr)
    

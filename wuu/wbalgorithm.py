@@ -129,6 +129,11 @@ class WBAlgorithm:
        #ALL events involved in conflicts should be deleted.
        for conflictMsg in recvConflictEvents:
            logging.info("Found conflict events in Msg: %s\n" % conflictMsg)
+           #create delete event
+           #put delete event into the log
+           #execute delete
+           #return the jsonmsg to various nodes 
+            
 
    def onAdd(self):
        #Insert an appointment
