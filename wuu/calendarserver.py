@@ -39,20 +39,17 @@ class CalendarServer(LineReceiver):
         self.users = users
 
     def connectionMade(self):
+        pdb.set_trace()
         stdout.write("Connection Made from %s\n" \
                          % self.transport.getPeer())
-        targetID = Configuration.getID(self.transport.getPeer()\
-               .split("'")[1]\
-               .split("'")[0])
+        targetID = Configuration.getID(self.transport.getPeer().host)
         self.users[targetID] = self
         self.sendLine("Connection Made. Now, you could send me messages.")
 
     def connectionLost(self, reason):
         stdout.write("Connection Lost from %s\n" \
                          % self.transport.getPeer())
-        targetID = Configuration.getID(self.transport.getPeer()\
-               .split("'")[1]\
-               .split("'")[0])
+        targetID = Configuration.getID(self.transport.getPeer().host)
         if targetID in self.users:
             del self.users[targetID]
 
