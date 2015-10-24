@@ -13,6 +13,7 @@ import pdb
 
 import logging
 import sys
+import json
 
 from ui.view import View
 
@@ -131,9 +132,14 @@ class StdioProxyProtocol(protocol.Protocol):
         if self.normalizeNewlines:
             data = re.sub(r"(\r\n|\n)", "\r\n", data)
         if self.output:
-            logging.info("Client Received Del for Conflict : %s\n" % data)
-            #These data could only contains del for conflict 
-            self.algorithm.receiveMsg(line, self.node)
+            try: # test if the data is for conflict notification
+                 # which is in JSON 
+                json_object = json.loads(data.strip())
+                logging.info("Client Received Del for Conflict : %s\n" % data)
+                #These data could only contains del for conflict 
+                self.algorithm.receiveMsg(data.strip(), self.node)
+            except ValueError, e:
+                pass
             self.output.write(data)
 
     def connectionMade(self):
