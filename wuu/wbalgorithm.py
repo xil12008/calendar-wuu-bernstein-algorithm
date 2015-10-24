@@ -133,15 +133,13 @@ class WBAlgorithm:
            for conflictMsg in recvConflictEvents:
                logging.info("Found conflict events in Msg: %s\n" % conflictMsg)
                tmp_lists = conflictMsg.split("|")
-               if len(timp_lists)==6 and tmp_lists[0]=="add":
+               if len(tmp_lists)==6 and tmp_lists[0]=="add":
                    #add the name and participates
                    resultDelList.append("del|"+tmp_lists[1])
            return resultDelList
        else:
            return None
 
-           #put delete event into the log and execute delete
-           #return the jsonmsg to various nodes 
             
 
    def onAdd(self):
