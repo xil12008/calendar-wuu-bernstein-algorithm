@@ -41,14 +41,20 @@ class CalendarServer(LineReceiver):
     def connectionMade(self):
         stdout.write("Connection Made from %s\n" \
                          % self.transport.getPeer())
-        self.users[Configuration.getID(self.transport.getPeer())] = self
+        targetID = Configuration.getID(self.transport.getPeer()\
+               .split("'")[1]\
+               .split("'")[0])
+        self.users[targetID] = self
         self.sendLine("Connection Made. Now, you could send me messages.")
 
     def connectionLost(self, reason):
         stdout.write("Connection Lost from %s\n" \
                          % self.transport.getPeer())
-        if Configuration.getID(self.transport.getPeer()) in self.users:
-            del self.users[Configuration.getID(self.transport.getPeer())]
+        targetID = Configuration.getID(self.transport.getPeer()\
+               .split("'")[1]\
+               .split("'")[0])
+        if targetID in self.users:
+            del self.users[targetID]
 
     def lineReceived(self, line):
         stdout.write("Server%d Received Data: %s\n" %( Configuration.getMyID(), line))
@@ -64,7 +70,7 @@ class CalendarServer(LineReceiver):
             if name == nodeId and nodeId != Configuration.getMyID(): 
                 protocol.sendLine(data)
                 return
-        logging.warning("One server's message not reply to client because no connection found")
+        logging.warning("One server's message not reply to client because no connection found or it's itself.")
 
 class CalendarServerFactory(Factory):
     def __init__(self, algorithm, node):
