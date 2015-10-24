@@ -12,6 +12,7 @@ from twisted.internet import reactor
 from sys import stdout
 from configure import Configuration
 import random
+import pdb
 
 import logging
 import sys
@@ -55,11 +56,12 @@ class CalendarServer(LineReceiver):
 
         #send jsonmsg to nodes to notify them 
         #it's for conflicts
+        pdb.set_trace()
         self.send2Node(0, "fake conflict notification")
 
     def send2Node(self, nodeId, data):
         for name, protocol in self.users.iteritems():
-            if name == nodeId:
+            if name == nodeId and nodeId != Configuration.getMyID(): 
                 protocol.sendLine(data)
                 return
         logging.warning("One server's message not reply to client because no connection found")
