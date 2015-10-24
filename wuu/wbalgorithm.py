@@ -176,22 +176,35 @@ class Node():
             start_time = lists[3]
             end_time = lists[4]
             participants = lists[5]
-            conflict = False
-            preParticipants = self.dc.getParticip(app_day,start_time,end_time)
-            for (users,) in preParticipants:
-                if conflict == True: break
-                for user in users.split(","):
-                    if user == str(self.node):
-                        conflict = True
-                        break
-                        
             self.dc.addApp(app_name,app_day,start_time,end_time, participants)
-            if conflict==True :
-                self.createEvent("del|"+app_name) 
-
         elif len(lists)==2 and lists[0]=="del":
             app_name = lists[1]
             self.dc.delApp(app_name)
+
+        #pdb.set_trace()
+        #lists = content.split("|")
+        #if len(lists)==6 and lists[0]=="add":
+        #    app_name = lists[1]
+        #    app_day = lists[2]
+        #    start_time = lists[3]
+        #    end_time = lists[4]
+        #    participants = lists[5]
+        #    conflict = False
+        #    preParticipants = self.dc.getParticip(app_day,start_time,end_time)
+        #    for (users,) in preParticipants:
+        #        if conflict == True: break
+        #        for user in users.split(","):
+        #            if user == str(self.node):
+        #                conflict = True
+        #                break
+        #                
+        #    self.dc.addApp(app_name,app_day,start_time,end_time, participants)
+        #    if conflict==True :
+        #        self.createEvent("del|"+app_name) 
+
+        #elif len(lists)==2 and lists[0]=="del":
+        #    app_name = lists[1]
+        #    self.dc.delApp(app_name)
 
     def viewApps(self):
         result = self.dc.getApps() 
