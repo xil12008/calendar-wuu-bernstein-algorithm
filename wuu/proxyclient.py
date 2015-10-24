@@ -131,8 +131,9 @@ class StdioProxyProtocol(protocol.Protocol):
         if self.normalizeNewlines:
             data = re.sub(r"(\r\n|\n)", "\r\n", data)
         if self.output:
-            logging.info("Client Received : %s\n" % data)
-            #@TODO this.algorithm.receiveMsg()
+            logging.info("Client Received Del for Conflict : %s\n" % data)
+            #These data could only contains del for conflict 
+            self.algorithm.receiveMsg(line, self.node)
             self.output.write(data)
 
     def connectionMade(self):

@@ -54,7 +54,6 @@ class CalendarServer(LineReceiver):
 
     def lineReceived(self, line):
         stdout.write("Server%d Received Data: %s\n" %( Configuration.getMyID(), line))
-        pdb.set_trace()
         delMsgs = self.algorithm.receiveMsg(line, self.node)
         #return the jsonmsg to various nodes 
         #send jsonmsg to nodes to notify them 

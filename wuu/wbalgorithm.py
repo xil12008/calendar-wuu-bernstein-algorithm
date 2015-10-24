@@ -202,6 +202,7 @@ class Node():
             logging.info("Checking Local Conflict:%s No\n" % content)
             return False;
         else:
+            logging.info("Wrong input for checkLocalConflict:%s\n" % content)
             return False;
     
     def createEvent(self,content):
