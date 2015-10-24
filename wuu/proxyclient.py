@@ -107,6 +107,7 @@ class DataForwardingProtocol(protocol.Protocol):
                 warning = "format: view"
                 logging.warning(warning)
                 return
+            e = self.node.createEvent("view")
             msg_lists = self.node.viewApps()
             self.transport.write("================View==============\n")
             for ele in msg_lists:
