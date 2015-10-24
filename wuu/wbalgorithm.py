@@ -195,7 +195,7 @@ class Node():
             participants = lists[5]
             inParticip = False
             for user in participants.split(","):
-                if user==self.node:
+                if int(user)==self.node:
                     inParticip = True
                     break
             if not inParticip:
