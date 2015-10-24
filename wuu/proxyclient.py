@@ -97,8 +97,14 @@ class DataForwardingProtocol(protocol.Protocol):
                 jsonmsg = self.algorithm.sendMsg2Node(i) 
                 self.send2Node(i, jsonmsg)
         elif cmds[0]=="view":
-            self.transport.write("View is under development.\n")
-        self.transport.write(">>>")
+            if len(cmds)!=2:
+                warning = "format: view <node id>"
+                logging.warning(warning)
+                return
+            msg = self.node.viewApps()
+            self.transport.write("================View==============\n")
+            self.transport.write(msg + "\n")
+        self.transport.write("----------------------------------\n")
    
     def connectionMade(self):
         self.clients[self.name] = self 
@@ -139,6 +145,7 @@ class StdioProxyFactory(ReconnectingClientFactory):
         #start one unique server
         reactor.listenTCP(12345, CalendarServerFactory(self.algorithm, self.node))
         logging.info("Server%d Launched, my ip=%s" % (myID, IP))
+        print "Server%d Launched, my ip=%s, my ID=%d" % (myID, IP, myID)
         self.clients={}
 
     def buildProtocol(self, addr):
