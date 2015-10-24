@@ -39,7 +39,6 @@ class CalendarServer(LineReceiver):
         self.users = users
 
     def connectionMade(self):
-        pdb.set_trace()
         stdout.write("Connection Made from %s\n" \
                          % self.transport.getPeer())
         targetID = Configuration.getID(self.transport.getPeer().host)
