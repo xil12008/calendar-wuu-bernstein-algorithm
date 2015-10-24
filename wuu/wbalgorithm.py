@@ -253,6 +253,6 @@ class Node():
         #    self.dc.delApp(app_name)
 
     def viewApps(self):
-        result = self.dc.getApps() 
-        return result
+        results = self.dc.getApps() 
+        return results
 

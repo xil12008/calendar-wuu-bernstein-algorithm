@@ -43,6 +43,7 @@ class DataConn():
         query = ("SELECT app_name, day, start_time, end_time, participants FROM appointments ")
         cur.execute(query)
         apps = cur.fetchall()
+        self.db.commit()
         cur.close()
         return apps
   

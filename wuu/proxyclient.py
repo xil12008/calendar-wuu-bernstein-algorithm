@@ -103,13 +103,20 @@ class DataForwardingProtocol(protocol.Protocol):
                 jsonmsg = self.algorithm.sendMsg2Node(i) 
                 self.send2Node(i, jsonmsg)
         elif cmds[0]=="view":
-            if len(cmds)!=2:
-                warning = "format: view <node id>"
+            if len(cmds)!=1:
+                warning = "format: view"
                 logging.warning(warning)
                 return
-            msg = self.node.viewApps()
+            msg_lists = self.node.viewApps()
             self.transport.write("================View==============\n")
-            self.transport.write(msg + "\n")
+            for ele in msg_lists:
+                    msg = "Name:%s Day:%s Start:%s End:%s Participants:%s"\
+                          %( ele[0],\
+                             view.days_str(int(ele[1])),\
+                             view.time_str(int(ele[2])),\
+                             view.time_str(int(ele[3])),\
+                             ele[4])
+                    self.transport.write(msg + "\n")
         self.transport.write("----------------------------------\n")
    
     def connectionMade(self):
