@@ -89,6 +89,7 @@ class WBAlgorithm:
        data = json.loads(jsonMsg)
        m = data["matrix"]
        events = data["events"]
+       recvConflictEvents= []
 
        #fetch from local database
        matrix =  [[0 for _ in range(self.n) ] for _ in range(self.n)]
@@ -109,6 +110,9 @@ class WBAlgorithm:
            if not self.__hasRec(matrix, event, self.ID):
                    self.dc.addLog(ele[3],ele[1],ele[0],ele[2])
                    node.appOperation(ele[2]) #execute the operation
+                   #we didn't change algorithm, but just records the conflicted events
+                   if node.checkLocalConflict(ele[2]): 
+                       recvConflictEvents.append(ele[2])
         
        #NOTE: matrix should be updated AFTER above events has been executed.
        for j in range(self.n):
@@ -119,6 +123,11 @@ class WBAlgorithm:
        for i in range(self.n):
            for j in range(self.n):
                self.dc.updateTime(i, j, matrix[i][j])
+
+       #After algorithm part, here we implement the conflict resolving
+       #ALL events involved in conflicts should be deleted.
+       for events in recvConflictEvents:
+           logging.info("Found conflict events in Msg: %s\n" % event)
 
    def onAdd(self):
        #Insert an appointment
@@ -161,7 +170,9 @@ class Node():
     dc = DataConn()
     node = Configuration.getMyID()
 
+    #NOTE: this function only checks local conflict
     def checkLocalConflict(self, content):
+        logging.info("Checking Local Conflict:%s\n" % content)
         lists = content.split("|")
         if len(lists)==6 and lists[0]=="add":
             app_name = lists[1]
@@ -172,9 +183,14 @@ class Node():
             preParticipants = self.dc.getParticip(app_day,start_time,end_time)
             for (users,) in preParticipants:
                 for user in users.split(","):
-                    if user == str(self.node):
+                    if user == str(self.node): #NOTE only return True if local node is involved in conflict
+                        logging.info("Checking Local Conflict:%s Yes\n" % content)
                         return True;
-
+            logging.info("Checking Local Conflict:%s No\n" % content)
+            return False;
+        else:
+            return False;
+    
     def createEvent(self,content):
         name = random.getrandbits(30)
         time = self.dc.getTime(self.node,self.node)+1
