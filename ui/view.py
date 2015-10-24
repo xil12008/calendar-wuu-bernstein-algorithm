@@ -22,13 +22,13 @@ class View():
         if num%2==1: half="30" 
         else: half="00"
         if num<24 : return str(num/2)+":"+half+"am"
-        elif num<48 : return str(num/2)+":"+half+"pm"
+        elif num<48 : return str(num/2-12)+":"+half+"pm"
 
     def time_int(self, hour_minute_m):
-        strs = hour_minute_m.split(':')
+        strs = hour_minute_m.strip().split(':')
         hour = int(strs[0])
         minute = int(strs[1][0:1])
-        m = strs[1][2:3]
+        m = strs[1][2:]
         
         num=0
         if m=="pm" : num+=24
@@ -38,18 +38,6 @@ class View():
 
 def Test():
     v = View()
-    print v.days_int(v.days_str(0))
-    print v.days_int(v.days_str(1))
-    print v.days_int(v.days_str(2))
-    print v.days_int(v.days_str(3))
-    print v.days_int(v.days_str(4))
-    print v.days_int(v.days_str(5))
-    print v.days_int(v.days_str(6))
-    print v.time_str(v.time_int("0:00am"))
-    print v.time_str(v.time_int("0:30am"))
-    print v.time_str(v.time_int("11:00am"))
-    print v.time_str(v.time_int("11:30am"))
-    print v.time_str(v.time_int("0:00pm"))
-    print v.time_str(v.time_int("11:00pm"))
-    print v.time_str(v.time_int("11:30pm"))
+    print v.time_str(v.time_int("1:00pm"))
+
 
