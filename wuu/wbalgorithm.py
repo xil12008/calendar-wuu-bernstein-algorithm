@@ -127,8 +127,8 @@ class WBAlgorithm:
 
        #After algorithm part, here we implement the conflict resolving
        #ALL events involved in conflicts should be deleted.
-       for events in recvConflictEvents:
-           logging.info("Found conflict events in Msg: %s\n" % event)
+       for conflictMsg in recvConflictEvents:
+           logging.info("Found conflict events in Msg: %s\n" % conflictMsg)
 
    def onAdd(self):
        #Insert an appointment
