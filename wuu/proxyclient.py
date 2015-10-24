@@ -86,10 +86,10 @@ class DataForwardingProtocol(protocol.Protocol):
             #@TODO check conflict before insert, so there won't be local conflict
             if not self.node.checkLocalConflict(msg):
                 e = self.node.createEvent(msg)
-                #for i in range(self.algorithm.n):
-                for i in cmds[5].split(","): 
-                    jsonmsg = self.algorithm.sendMsg2Node(i) 
-                    self.send2Node(i, jsonmsg)
+                #for i in range(self.algorithm.n): this line is broadcasts
+                for str_i in cmds[5].split(","): 
+                    jsonmsg = self.algorithm.sendMsg2Node(int(str_i)) 
+                    self.send2Node(int(str_i), jsonmsg)
             else:
                 self.transport.write("Sorry, there is conflict. Try again.\n")
         elif cmds[0]=="del":
