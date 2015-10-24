@@ -111,8 +111,9 @@ class WBAlgorithm:
                try:
                    self.dc.addLog(ele[3],ele[1],ele[0],ele[2])
                    node.appOperation(ele[2]) #execute the operation
-               except:
+               except Error:
                    logging.warning("Database error..."); 
+                   logging.warning(Error);
         
        #NOTE: matrix should be updated AFTER above events has been executed.
        for j in range(self.n):
@@ -193,8 +194,11 @@ class Node():
             if conflict==True :
                 self.createEvent("del|"+app_name) 
 
-
         elif len(lists)==2 and lists[0]=="del":
             app_name = lists[1]
             self.dc.delApp(app_name)
+
+    def viewApps(self):
+        result = self.dc.getApps() 
+        return result
 
