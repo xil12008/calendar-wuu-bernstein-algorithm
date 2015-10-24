@@ -108,11 +108,12 @@ class WBAlgorithm:
                  #Event(name, node, time, content)
            event = Event(key, ele[1], ele[0], ele[2])
            if not self.__hasRec(matrix, event, self.ID):
+                   if node.checkLocalConflict(ele[2]): 
+                       recvConflictEvents.append(ele[2])
+
                    self.dc.addLog(ele[3],ele[1],ele[0],ele[2])
                    node.appOperation(ele[2]) #execute the operation
                    #we didn't change algorithm, but just records the conflicted events
-                   if node.checkLocalConflict(ele[2]): 
-                       recvConflictEvents.append(ele[2])
         
        #NOTE: matrix should be updated AFTER above events has been executed.
        for j in range(self.n):
