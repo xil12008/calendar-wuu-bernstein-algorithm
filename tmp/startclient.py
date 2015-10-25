@@ -15,8 +15,8 @@ from proxyclient import StdioProxyFactory
 #reactor.connectTCP("52.26.113.118", 12345, CalendarClientFactory())
 
 spfactory =  StdioProxyFactory()
-reactor.connectTCP("52.89.222.24", 12345, spfactory)
-reactor.connectTCP("52.26.113.118", 12345, spfactory)
+reactor.connectTCP("52.89.158.138", 12345, spfactory)
+reactor.connectTCP("52.88.245.160", 12345, spfactory)
 
 reactor.run()
 
