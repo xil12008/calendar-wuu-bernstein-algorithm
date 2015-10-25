@@ -185,6 +185,5 @@ class StdioProxyFactory(ReconnectingClientFactory):
     def clientConnectionFailed(self, connector, reason):
         logging.debug('One Connection failed. Reason: %s' % reason)
         logging.info('One Connection failed.') 
-        #ReconnectingClientFactory.clientConnectionFailed(self, connector,
+        #ReconnectingClientFactory.clientConnectionFailed(self, connector,reason)
         self.retry(connector)
-                                                         reason)
