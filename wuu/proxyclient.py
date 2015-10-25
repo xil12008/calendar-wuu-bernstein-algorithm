@@ -172,17 +172,19 @@ class StdioProxyFactory(ReconnectingClientFactory):
 
     def buildProtocol(self, addr):
         #Consider expo delay for reconnection
-        self.resetDelay()
+        #self.resetDelay()
         logging.info("Building Protocol addr=%s" % addr)
         return StdioProxyProtocol(self.clients, self.algorithm, self.node, addr)
    
     def clientConnectionLost(self, connector, reason):
         logging.debug('One Connection Lost. Reason: %s' % reason)
         logging.info('One Connection Lost.') 
-        ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
+        #ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
+        self.retry(connector)
 
     def clientConnectionFailed(self, connector, reason):
         logging.debug('One Connection failed. Reason: %s' % reason)
         logging.info('One Connection failed.') 
-        ReconnectingClientFactory.clientConnectionFailed(self, connector,
+        #ReconnectingClientFactory.clientConnectionFailed(self, connector,
+        self.retry(connector)
                                                          reason)
