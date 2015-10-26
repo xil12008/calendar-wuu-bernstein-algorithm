@@ -160,6 +160,9 @@ class StdioProxyProtocol(protocol.Protocol):
 
 class StdioProxyFactory(ReconnectingClientFactory):
     protocol = StdioProxyProtocol
+
+    def startedConnecting(self, connector):
+        logging.info('Started to connect.')
     
     def __init__(self, myID, IP):
         self.algorithm = WBAlgorithm()
@@ -172,7 +175,7 @@ class StdioProxyFactory(ReconnectingClientFactory):
 
     def buildProtocol(self, addr):
         #Consider expo delay for reconnection
-        #self.resetDelay()
+        self.resetDelay()
         logging.info("Building Protocol addr=%s" % addr)
         return StdioProxyProtocol(self.clients, self.algorithm, self.node, addr)
    
