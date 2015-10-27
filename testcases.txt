@@ -99,10 +99,10 @@ User 1 recovers
 
 
 NODE0: add play Sun 11:00am 11:30am 0
-NODE1: add play Sun 11:30am 12:00am 1
-NODE2: add play Sun 12:00am 12:30am 2
+NODE1: add play1 Sun 11:30am 12:00am 1
+NODE2: add play2 Sun 12:00am 12:30am 2
 NODE0: ctrl-c
-NODE3: add play Sun 11:00am 1:00pm 0,1,2,3
+NODE3: add play3 Sun 11:00am 1:00pm 0,1,2,3
 NODE0: recover
 
 
